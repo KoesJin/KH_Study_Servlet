@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * http://locallhost:8001/servlet/gettest.do
@@ -39,10 +40,54 @@ public class RequestGetServlet extends HttpServlet {
         double height = Double.parseDouble(req.getParameter("height")); // "180.0" -> 180.0
 
         // 체크박스와 같이 여러개의 값을 추출하고자 할 때 배열로 받자
-        String[] foods = req.getParameterValues("foods"); // ["한식", "중식"] | null
+        String[] foods = req.getParameterValues("food"); // ["한식", "중식"] | null
 
-        System.out.println("name : " + name + " gender : " + gender + " age : " + age + " address : " + address + " height : " + height);
-        System.out.println("foods : " + String.join(",", foods));
+        System.out.println("name : " + name);
+        System.out.println("gender : " + gender);
+        System.out.println("age : " + age);
+        System.out.println("adrress : " + address);
+        System.out.println("height : " + height);
+        System.out.println("foods : " + String.join(", ", foods));
+
+        // service > dao > db
+
+        /**
+         * int result = new MemberService().insertMember(name,gender...);
+         * if(result > 0){
+         *  // 성공
+         *  }else{
+         *  // 실패
+         *}
+         */
+        // 위의 결과에따라 응답페이지(html) 만들어서 전송
+        // 즉 , 여기 Java코드내에 사용자가 보게될 응답 html구문을 작성
+
+        // response 객체를 통해서 사용자에게 응답화면 전달
+
+        // 1) 응답으로 출력할 내용은 html이고 문자셋은 utf-8이다 -> 선언
+        resp.setContentType("text/html;charset=UTF-8");
+
+        // 2) 응답받는 사용자와의 스트림 연결 ( 출력 )
+        PrintWriter out = resp.getWriter();
+
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<body>");
+        out.println("<h2>개인정보 응답화면</h2></br>");
+        out.printf("<span>%s</span>님은</br>",name);
+        out.printf("<span>%s</span>살이며</br>",age);
+        out.printf("<span>%s</span>에 삽니다</br>",address);
+        out.println("성별은");
+        if (gender == null) {
+            out.println(" 미입력 상태입니다.");
+        } else if (gender.equals("M")) {
+            out.println("남자입니다");
+        }else {
+            out.println("여자입니다");
+        }
+        out.println("</body>");
+        out.println("</head>");
+        out.println("</html>");
     }
 
     @Override
